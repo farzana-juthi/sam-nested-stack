@@ -59,6 +59,16 @@ Lets see API gateway from aws console. First image shows that both parent and ch
 
 - Now we will see how we access the child stack APIs through parent API endpoint. You will see that I used parent API url, then the child stack proxy part "product" and then the child stack method part.
 
+  - URL will be like follwoing - 
+    ```
+       <base_url>/<proxy_path>/<child_stack_method_url_part>
+       Here,
+           base_url = https://ef3g9fhymg.execute-api.us-west-2.amazonaws.com/dev
+           proxy_path = product
+           child_stack_method_url_part = get-product/1
+                                             or
+                                         add-product
+    ```
   - If you want to use web browser to check this, you can only check GET method because browser automatically send get request. If you want to check this with carl or postman you can do that.
   
   - From Browser, you can check your GET APIs like following
