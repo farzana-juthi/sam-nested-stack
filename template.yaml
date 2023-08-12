@@ -73,7 +73,7 @@ Resources:
         AllowOrigin: "'*'"
 
 
-  #Root template needs at least one function. 
+  #Root API gateway needs at least one function.
   PingRootFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -94,3 +94,7 @@ Resources:
     Properties:
       RestApiId: !Ref RootDefaultApi
       StageName: !Ref StageName
+
+Outputs:
+  RootAPI:
+    Value: !Sub "https://${RootDefaultApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
