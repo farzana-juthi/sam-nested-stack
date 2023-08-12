@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Product Nested Stack
+
+Globals:
+  Function:
+    Timeout: 3
+    Runtime: python3.8
+
+Parameters:  # If you pass any parameters from parent stack, then you have to take it from child stack like following way
+  StageName:
+    Type: String
+
+
+Resources:
+  # ================================= Api =================================
+  ProductStackApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      TracingEnabled: true
+      StageName: !Ref StageName
+      GatewayResponses:
+        DEFAULT_4XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'*'"
+        DEFAULT_5XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'*'"
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+
+  AddProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/product/
+      Handler: add_product.lambda_handler
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      Events:
+        AddProductCategoryEvent:
+          Type: Api
+          Properties:
+            Path: /add-product
+            Method: post
+            RestApiId: !Ref ProductStackApi
+
+  GetProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/product/
+      Handler: get_product.lambda_handler
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      Events:
+        GetProductCategoriesEvent:
+          Type: Api
+          Properties:
+            Path: /get-product/{product-id}
+            Method: get
+            RestApiId: !Ref ProductStackApi
+
+Outputs:
+  ProductStackApiId:  # this is very important for proxy part. This API id will be used in ProxyMethod
+    Description: "Api gateway ID"
+    Value: !Ref ProductStackApi

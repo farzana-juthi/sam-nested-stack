@@ -1,0 +1,41 @@
+{
+        "Records": [
+            {
+                "messageId": "d712cf5a-f3c1-4432-adcb-4d780d28e442",
+                "receiptHandle": "AQEBF7D+sdIw6Y/jnmmCUZRqHM+Qdztgw770J0umhdfM+i/QFJBiQkZNNoGFmawjies9XsNeQnfCweR+z7I9JYKlVEFj6zfskRLnSczmLwu+vz8lu2FaYR4ZH4TN1iplg85sr4YoGZ6b9IPM+nlF3sZ2WXZUNbyms7EL51Mj5KeRZ27E1/t2j0g6IeoiKWaBWuNnic9WqbG9knt0M/OdLT9873BNoxAp6Kp5uEhLVLvTiJ0Xf/jg+8t1xGmmutBMNCFLQfzqYDD6AXOjuTeMRipzJGfUFD9s1iITYcpv8M7MNBciOBwFJa1vU91VOI2VwdZaemUev6C0YJLxhY4NlqSm7yqKS5Kak1wejDgZ0OR6+ITEjbZGOs4ruxVoxMuVAa/8qI81FfkafUKa4cpjvxSWfBm701x6romFibMbHEIj5Qs=",
+                "body": "inactivate category",
+                "attributes": {
+                    "ApproximateReceiveCount": "1",
+                    "AWSTraceHeader": "Root=1-62fdef43-35bab132165d95411e8cc456;Parent=d04a72a523f474f8;Sampled=1",
+                    "SentTimestamp": "1660809030197",
+                    "SenderId": "AROAZUZUARRHJALEME3JZ:olsa-backend-ProductStack-InactivateProductCategor-EJ7q6y44KL4T",
+                    "ApproximateFirstReceiveTimestamp": "1660809030198"
+                },
+                "messageAttributes": {
+                    "inactive_reason": {
+                        "stringValue": "test kortesi",
+                        "stringListValues": [],
+                        "binaryListValues": [],
+                        "dataType": "String"
+                    },
+                    "category_id": {
+                        "stringValue": "0f8823739d559fa7c26fbb72045bb88bbb5feaea",
+                        "stringListValues": [],
+                        "binaryListValues": [],
+                        "dataType": "String"
+                    },
+                    "requester_id": {
+                        "stringValue": "0e8cde2edbf1d41e7c587b80d779f497e12ab476",
+                        "stringListValues": [],
+                        "binaryListValues": [],
+                        "dataType": "String"
+                    }
+                },
+                "md5OfMessageAttributes": "1e638934d050b8947a0a1e25f0aebbed",
+                "md5OfBody": "8382475a98ae082eca3a853ac93dd6d0",
+                "eventSource": "aws:sqs",
+                "eventSourceARN": "arn:aws:sqs:us-west-2:663144664142:DeActivateRequestProcessQueue-dev",
+                "awsRegion": "us-west-2"
+            }
+        ]
+    }

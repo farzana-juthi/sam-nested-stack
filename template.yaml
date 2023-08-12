@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Single URL application demo
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    Runtime: python3.8 # Here you can use lambda supported language and its version
+
+# Application parameter list
+Parameters:
+  # For different environment we will pass stageName. By defualt, it is dev.
+  StageName:
+    Type: String
+    Default: dev
+
+Resources:
+  # ============ ProductStack API Proxy ============
+  ProductStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: product-stack/template.yaml
+      Parameters:
+        StageName: !Ref StageName  # You can pass parameters to your nested stack like this
+
+  ProductStackApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt RootDefaultApi.RootResourceId
+      RestApiId: !Ref RootDefaultApi
+      PathPart: 'product'         # It will be part of your path (base url) to access your stack
+
+  ProductStackProxyApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref ProductStackApiResource
+      RestApiId: !Ref RootDefaultApi
+      PathPart: '{proxy+}'
+
+  ProductStackProxyMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: ANY
+      ResourceId: !Ref ProductStackProxyApiResource
+      RestApiId: !Ref RootDefaultApi
+      AuthorizationType: NONE
+      RequestParameters:
+        method.request.path.proxy: true
+      Integration:
+        CacheKeyParameters:
+          - 'method.request.path.proxy'
+        RequestParameters:
+          integration.request.path.proxy: 'method.request.path.proxy'
+        IntegrationHttpMethod: ANY
+        Type: HTTP_PROXY
+        Uri: !Sub "https://${ProductStack.Outputs.ProductStackApiId}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/{proxy}"
+        PassthroughBehavior: WHEN_NO_MATCH
+        IntegrationResponses:
+          - StatusCode: 200
+
+
+  # For using a common URL for full application, we need a common API
+  RootDefaultApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      TracingEnabled: true
+      StageName: !Ref StageName
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+
+
+  #Root template needs at least one function. 
+  PingRootFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ping_root/
+      Handler: app.lambda_handler
+      Events:
+        PingRootEvent:
+          Type: Api
+          Properties:
+            Path: /ping-root
+            Method: get
+            RestApiId: !Ref RootDefaultApi
+
+
+  RootDeployment:
+    DependsOn: ProductStackProxyMethod
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref RootDefaultApi
+      StageName: !Ref StageName
